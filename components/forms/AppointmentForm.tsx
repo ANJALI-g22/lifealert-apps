@@ -96,20 +96,23 @@ export const AppointmentForm = ({
           appointmentId: appointment?.$id!,
           appointment: {
             primaryPhysician: values.primaryPhysician,
-            schedule: new Date(values.schedule),
-            status: status as Status,
-            cancellationReason: values.cancellationReason,
-          },
-          type,
-        };
+ const appointmentData = {
+      userId: session?.user?.id as string,
+      patient: values.patient,
+      primaryPhysician: values.primaryPhysician,
+      schedule: new Date(values.schedule),
+      reason: values.reason,
+      note: values.note,
+      status: "pending" as const,
+      cancellationReason: values.cancellationReason || null,
+    };
 
-        const updatedAppointment = await updateAppointment(appointmentToUpdate);
+    const newAppointment = await createAppointment(appointmentData);
 
-        if (updatedAppointment) {
-          setOpen && setOpen(false);
-          form.reset();
-        }
-      }
+    if (newAppointment) {
+      form.reset();
+      setOpen && setOpen(false);
+    }
     } catch (error) {
       console.log(error);
     }
